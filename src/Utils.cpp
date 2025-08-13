@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+#include <limits>
 
 namespace ChessUtils {
 
@@ -99,27 +100,52 @@ void resetTextColor() {
 std::string getInput(const std::string& prompt) {
     std::cout << prompt;
     std::string input;
-    if (std::cin.rdbuf()->in_avail() > 0) {
-        std::cin.ignore(10000, '\n');
+    
+    if (std::cin.eof()) {
+        return "quit";  // Return quit command if EOF
     }
-    std::getline(std::cin, input);
-    return trim(input);
+    
+    // Clear any pending input only if available
+    if (std::cin.rdbuf()->in_avail() > 0) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    
+    if (std::getline(std::cin, input)) {
+        return trim(input);
+    } else {
+        // Handle EOF or error
+        return "quit";
+    }
 }
 
 int getChoice(const std::string& prompt, int minChoice, int maxChoice) {
     int choice;
     while (true) {
         std::cout << prompt;
-        if (std::cin >> choice && choice >= minChoice && choice <= maxChoice) {
-            std::cin.ignore();  // Clear the newline character
-            return choice;
+        if (std::cin >> choice) {
+            if (choice >= minChoice && choice <= maxChoice) {
+                // Clear the remaining input on the line
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return choice;
+            }
+            // Clear the remaining input on the line for invalid choice
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a number between " 
+                      << minChoice << " and " << maxChoice << ".\n";
+        } else {
+            // Handle EOF or input error
+            if (std::cin.eof()) {
+                // End of file reached, return default or exit gracefully
+                std::cout << "\nEOF reached. Exiting...\n";
+                return maxChoice; // Return quit option
+            }
+            
+            // Clear error state and input buffer
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input. Please enter a number between " 
+                      << minChoice << " and " << maxChoice << ".\n";
         }
-        
-        // Clear error state and input buffer
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
-        std::cout << "Invalid input. Please enter a number between " 
-                  << minChoice << " and " << maxChoice << ".\n";
     }
 }
 

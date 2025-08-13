@@ -152,6 +152,9 @@ bool Board::isValidMove(const Move& move) const {
     // Must have a piece to move
     if (fromPiece.isEmpty()) return false;
     
+    // Must be moving your own piece
+    if (fromPiece.getColor() != gameState.currentPlayer) return false;
+    
     // Can't capture own piece
     if (!toPiece.isEmpty() && fromPiece.getColor() == toPiece.getColor()) {
         return false;

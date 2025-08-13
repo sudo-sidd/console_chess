@@ -48,14 +48,36 @@ install-deps:
 	@echo "No external dependencies required for this project."
 	@echo "Make sure you have a C++17 compatible compiler (g++ 7+ or clang++ 5+)"
 
+# Test targets
+test: $(TARGET)
+	@echo "Building and running tests..."
+	@$(MAKE) -C tests run-tests
+
+test-utils:
+	@$(MAKE) -C tests run-utils
+
+test-piece:
+	@$(MAKE) -C tests run-piece
+
+test-board:
+	@$(MAKE) -C tests run-board
+
+test-clean:
+	@$(MAKE) -C tests clean
+
 # Help
 help:
 	@echo "Available targets:"
-	@echo "  all       - Build the chess game (default)"
-	@echo "  debug     - Build with debug symbols"
-	@echo "  clean     - Remove build files"
-	@echo "  run       - Build and run the game"
-	@echo "  help      - Show this help message"
+	@echo "  all        - Build the chess game (default)"
+	@echo "  debug      - Build with debug symbols"
+	@echo "  clean      - Remove build files"
+	@echo "  run        - Build and run the game"
+	@echo "  test       - Run all unit tests"
+	@echo "  test-utils - Run utility function tests"
+	@echo "  test-piece - Run piece class tests"
+	@echo "  test-board - Run board class tests"
+	@echo "  test-clean - Clean test files"
+	@echo "  help       - Show this help message"
 
 # Phony targets
-.PHONY: all debug clean run install-deps help
+.PHONY: all debug clean run install-deps test test-utils test-piece test-board test-clean help

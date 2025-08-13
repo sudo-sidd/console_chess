@@ -29,11 +29,41 @@ A full-featured chess game written in C++ that runs in the terminal.
 
 ```bash
 # Compile the game
+make
+
+# Alternative manual compilation
 g++ -std=c++17 -I. main.cpp src/*.cpp -o chess_game
 
 # Run the game
 ./chess_game
+
+# Clean build files
+make clean
 ```
+
+## Testing
+
+The project includes a comprehensive unit testing framework with 193 tests covering all core functionality.
+
+```bash
+# Run all tests
+make test
+
+# Run specific test suites  
+make test-utils    # Test utility functions
+make test-piece    # Test piece functionality  
+make test-board    # Test board functionality
+
+# Clean test files
+make test-clean
+```
+
+**Test Coverage:**
+- ✅ **46 Utils tests** - String manipulation, coordinate conversion, move parsing
+- ✅ **82 Piece tests** - Construction, values, movement rules for all piece types  
+- ✅ **65 Board tests** - Initialization, move validation, check detection, game state
+
+The testing framework has already identified and helped fix critical bugs, ensuring reliable gameplay.
 
 ## How to Play
 
@@ -69,6 +99,14 @@ console_chess/
 │   ├── AI.cpp
 │   └── Utils.cpp
 └── README.md
+├── tests/                # Unit testing framework
+│   ├── test_framework.h  # Custom testing infrastructure
+│   ├── test_utils.cpp    # Tests for utility functions
+│   ├── test_piece.cpp    # Tests for piece functionality
+│   ├── test_board.cpp    # Tests for board functionality
+│   ├── Makefile         # Test compilation
+│   └── README.md        # Testing documentation
+└── Makefile             # Main build system
 ```
 
 ## Learning C++ Through This Project

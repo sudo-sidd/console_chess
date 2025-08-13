@@ -2,6 +2,7 @@
 #include "../include/Utils.h"
 #include <iostream>
 #include <memory>
+#include <limits>
 
 // Constructor
 Game::Game() : currentMode(GameMode::PLAYER_VS_PLAYER), gameRunning(false) {
@@ -26,7 +27,7 @@ void Game::showWelcomeMessage() {
     std::cout << "╔══════════════════════════════════════════════╗\n";
     std::cout << "║              CONSOLE CHESS GAME              ║\n";
     std::cout << "║                                              ║\n";
-    std::cout << "║     A full-featured chess game in C++       ║\n";
+    std::cout << "║     A full-featured chess game in C++        ║\n";
     std::cout << "║                                              ║\n";
     std::cout << "╚══════════════════════════════════════════════╝\n\n";
     
@@ -37,10 +38,8 @@ void Game::showWelcomeMessage() {
     std::cout << "• Beautiful Unicode display\n\n";
     
     std::cout << "Press Enter to continue...";
-    std::cin.ignore();
-    if (std::cin.peek() != '\n') {
-        std::cin.ignore(10000, '\n');
-    }
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // Show goodbye message
@@ -107,6 +106,12 @@ void Game::playPlayerVsPlayer() {
         displayGameState();
         
         Move playerMove = getPlayerMove();
+        
+        // Check for quit move
+        if (playerMove.fromRow == -1) {
+            return;  // Player wants to quit
+        }
+        
         if (executeMove(playerMove)) {
             // Move was successful, continue
         } else {
@@ -128,6 +133,12 @@ void Game::playPlayerVsAI() {
         if (currentPlayer != ai->getColor()) {
             // Human player's turn
             Move playerMove = getPlayerMove();
+            
+            // Check for quit move
+            if (playerMove.fromRow == -1) {
+                return;  // Player wants to quit
+            }
+            
             if (!executeMove(playerMove)) {
                 std::cout << "Invalid move! Please try again.\n";
                 waitForEnter();
@@ -317,11 +328,15 @@ void Game::showAbout() {
 // Wait for user to press Enter
 void Game::waitForEnter() {
     std::cout << "Press Enter to continue...";
-    std::cin.clear();
-    if (std::cin.rdbuf()->in_avail() > 0) {
-        std::cin.ignore(10000, '\n');
+    std::cout.flush();
+    
+    if (std::cin.eof()) {
+        return;  // Just return if EOF
     }
-    std::cin.get();
+    
+    // Clear any pending input and wait for enter
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // Quit the game
